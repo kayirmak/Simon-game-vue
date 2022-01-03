@@ -10,7 +10,6 @@
                 :class="item"
                 @click="panelClicked($event.currentTarget)"    
             >
-                
             </div>
         </div>
         <div class="level">
@@ -28,25 +27,7 @@
             </div>
         </div>
         <h3>Round: {{round}}</h3>
-        <!-- <div class="panel">
-            <div class="panel-item blue" ref="blue">
-
-            </div>
-
-            <div class="panel-item red" ref="red">
-                
-            </div>
-
-            <div class="panel-item yellow" ref="yellow">
-                
-            </div>
-
-            <div class="panel-item green" ref="green">
-                
-            </div>
-
-        </div> -->
-        <button :disabled="gameProccess" :class="{disabled: gameProccess}" @click="startFlashing">Start</button>
+        <button :disabled="gameProccess" @click="startFlashing">Start</button>
     </div>
 </template>
 
@@ -65,6 +46,7 @@ export default {
         }
     },
     mounted() {
+        
         this.sequence = [this.getRandomPanel()]
         this.sequenceToGuess = [...this.sequence]
     },
@@ -76,6 +58,22 @@ export default {
             let green = this.$refs.green[0]
             const panels = [blue, red, yellow, green]
             return panels[parseInt(Math.random() * panels.length)]
+        },
+        playAudio(panelClicked) {
+            let audio
+            switch (panelClicked.classList[1]) {
+                case 'blue': audio = new Audio(require('../assets/audio/sounds_2.mp3'))
+                    break;
+                case 'red': audio = new Audio(require('../assets/audio/sounds_1.mp3'))
+                    break;
+                case 'yellow': audio = new Audio(require('../assets/audio/sounds_3.mp3'))
+                    break;
+                case 'green': audio = new Audio(require('../assets/audio/sounds_4.mp3'))
+                    break;
+                default:
+                    break;
+            }    
+            return audio.play()
         },
 
         flash(panel) {
@@ -92,6 +90,7 @@ export default {
                     default:
                         break;
                 }
+                this.playAudio(panel)
                 panel.classList.add('active')
                 await setTimeout(() => {
                     panel.classList.remove('active')
@@ -106,6 +105,7 @@ export default {
             if(!this.canClick) return
             const expectedPanel = this.sequenceToGuess.shift()
             if(expectedPanel === panelClicked) {
+                this.playAudio(panelClicked)
                 console.log(expectedPanel,'-expectedPanel', panelClicked, '-panelClicked');
                 if(this.sequenceToGuess.length === 0) {
                     this.sequence.push(this.getRandomPanel())
@@ -152,9 +152,7 @@ export default {
         cursor: pointer;
         color: white;
         font-size: 24px;
-    }
-    .disabled {
-        background: rgba(0, 128, 0, 0.267);
+
     }
     .panel {
         position: relative;

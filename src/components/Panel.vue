@@ -46,7 +46,7 @@
             </div>
 
         </div> -->
-        <button :disabled="gameProccess" @click="startFlashing">Start</button>
+        <button :disabled="gameProccess" :class="{disabled: gameProccess}" @click="startFlashing">Start</button>
     </div>
 </template>
 
@@ -152,7 +152,9 @@ export default {
         cursor: pointer;
         color: white;
         font-size: 24px;
-
+    }
+    .disabled {
+        background: rgba(0, 128, 0, 0.267);
     }
     .panel {
         position: relative;
